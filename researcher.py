@@ -1,9 +1,26 @@
+import argparse
 import os
 from typing import Literal
 
 from deepagents import create_deep_agent  # pyright: ignore[reportMissingImports]
 from deepagents.backends import FilesystemBackend
 from tavily import TavilyClient  # pyright: ignore[reportMissingImports]
+
+MODELS = {
+    "claude": "anthropic:claude-sonnet-4-6",
+    "gemma": "google_genai:gemma-4-26b-a4b-it",
+}
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--model",
+    choices=MODELS.keys(),
+    default="claude",
+    help="Model to use: 'claude' (Anthropic) or 'gemma' (Google AI Studio)",
+)
+args = parser.parse_args()
+model = MODELS[args.model]
+print(f"Using model: {model}")
 
 tavily_client = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 
@@ -32,11 +49,12 @@ Du skal svare på dansk.
 """
 
 agent = create_deep_agent(
-    model="anthropic:claude-sonnet-4-6",  # default model
+    model=model,
     tools=[internet_search],
     system_prompt=research_instructions,
     backend=FilesystemBackend(root_dir=".", virtual_mode=True),
 )
+
 final_message = None
 for chunk in agent.stream(
     {

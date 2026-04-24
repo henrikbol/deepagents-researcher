@@ -29,7 +29,8 @@ cp .env.example .env
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | [console.anthropic.com](https://console.anthropic.com/) |
+| `ANTHROPIC_API_KEY` | For `--model claude` | [console.anthropic.com](https://console.anthropic.com/) |
+| `GOOGLE_API_KEY` | For `--model gemma` | [aistudio.google.com](https://aistudio.google.com/) → API Keys |
 | `TAVILY_API_KEY` | Yes | [app.tavily.com](https://app.tavily.com/) |
 | `LANGSMITH_TRACING` | No | Set to `true` to enable LangSmith tracing |
 | `LANGSMITH_API_KEY` | No | Required if `LANGSMITH_TRACING=true` |
@@ -39,16 +40,29 @@ The project uses [direnv](https://direnv.net/) via `.envrc` — run `direnv allo
 ## Run
 
 ```bash
+# Default: Claude Sonnet (Anthropic)
 uv run python researcher.py
+
+# Google Gemma 3 4B via Google AI Studio
+uv run python researcher.py --model gemma
 ```
 
 The agent streams its progress to the terminal and saves the final report to `rapport.md`.
+
+## Models
+
+| Flag | Model | Provider |
+|------|-------|----------|
+| `--model claude` (default) | `claude-sonnet-4-6` | Anthropic — best tool calling reliability |
+| `--model gemma` | `gemma-4-26b-a4b-it` | Google AI Studio — Gemma 4 MoE with 4B active params |
+
+> **Note:** Gemma via Google AI Studio supports tool calling, but may be less reliable than Claude for complex multi-step agent runs.
 
 ## Key configuration
 
 | Parameter | Value | Purpose |
 |-----------|-------|---------|
-| `model` | `anthropic:claude-sonnet-4-6` | The LLM powering the agent |
+| `--model` | `claude` / `gemma` | Switch LLM at runtime |
 | `backend` | `FilesystemBackend(root_dir=".", virtual_mode=True)` | Writes files to the project directory |
 | `tools` | `internet_search` (Tavily) | Web search capability |
 | `stream_mode` | `"updates"` | Print each agent step as it happens |
@@ -57,3 +71,4 @@ The agent streams its progress to the terminal and saves the final report to `ra
 
 - [deepagents](https://pypi.org/project/deepagents/) — agent framework by LangChain
 - [tavily-python](https://pypi.org/project/tavily-python/) — web search API
+- [langchain-google-genai](https://pypi.org/project/langchain-google-genai/) — Google AI Studio / Gemma support
