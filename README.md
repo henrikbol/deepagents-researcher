@@ -43,7 +43,7 @@ The project uses [direnv](https://direnv.net/) via `.envrc` — run `direnv allo
 # Default: Claude Sonnet (Anthropic)
 uv run python researcher.py
 
-# Google Gemma 3 4B via Google AI Studio
+# Google Gemma 4-26b via Google AI Studio
 uv run python researcher.py --model gemma
 ```
 
